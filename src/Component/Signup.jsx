@@ -1,92 +1,123 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import API from "../api/axios";
 
 export default function Signup() {
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    Username: "",
+    email: "",
+    password: "",
+    mobile: "",
+  });
+
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage("");
+
+    try {
+      const res = await API.post("auth/signup", formData);
+
+      setMessage("Signup Successful 🎉");
+
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
+    } catch (error) {
+      if (error.response) {
+        setMessage(error.response.data.message);
+      } else {
+        setMessage("Server error");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <section className="bg-black min-h-screen pt-24 pb-16 px-4">
+      <div className="max-w-md mx-auto bg-gray-900 p-8 rounded-2xl shadow-2xl">
 
-      <div className="max-w-md mx-auto 
-                      bg-gradient-to-br from-gray-900 to-gray-800 
-                      p-6 sm:p-8 
-                      rounded-2xl 
-                      shadow-2xl 
-                      border border-green-500/20">
-
-        <h2 className="text-2xl font-bold text-white text-center mb-2">
+        <h2 className="text-2xl font-bold text-white text-center mb-6">
           Create Account
         </h2>
 
-        <p className="text-gray-400 text-center text-sm mb-8">
-          Join CredFlow and explore loan options
-        </p>
+        {message && (
+          <p className="text-center text-sm mb-4 text-green-400">
+            {message}
+          </p>
+        )}
 
-        <form className="space-y-5">
+        <form className="space-y-4" onSubmit={handleSubmit}>
 
-          <div>
-            <label className="text-green-400 text-sm font-medium">
-              Full Name
-            </label>
-            <input
-              type="text"
-              placeholder="Enter your name"
-              className="w-full mt-1 px-4 py-2.5 rounded-lg 
-                         bg-black/70 text-white 
-                         border border-gray-700 
-                         focus:ring-2 focus:ring-green-500 
-                         outline-none transition text-sm"
-            />
-          </div>
+          <input
+            type="text"
+            name="Username"
+            placeholder="Full Name"
+            value={formData.Username}
+            onChange={handleChange}
+            className="w-full px-4 py-2 rounded bg-black text-white border"
+            required
+          />
 
-          <div>
-            <label className="text-green-400 text-sm font-medium">
-              Email Address
-            </label>
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="w-full mt-1 px-4 py-2.5 rounded-lg 
-                         bg-black/70 text-white 
-                         border border-gray-700 
-                         focus:ring-2 focus:ring-green-500 
-                         outline-none transition text-sm"
-            />
-          </div>
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
+            className="w-full px-4 py-2 rounded bg-black text-white border"
+            required
+          />
 
-          <div>
-            <label className="text-green-400 text-sm font-medium">
-              Password
-            </label>
-            <input
-              type="password"
-              placeholder="Create password"
-              className="w-full mt-1 px-4 py-2.5 rounded-lg 
-                         bg-black/70 text-white 
-                         border border-gray-700 
-                         focus:ring-2 focus:ring-green-500 
-                         outline-none transition text-sm"
-            />
-          </div>
+          <input
+            type="text"
+            name="mobile"
+            placeholder="Mobile"
+            value={formData.mobile}
+            onChange={handleChange}
+            className="w-full px-4 py-2 rounded bg-black text-white border"
+            required
+          />
+
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
+            className="w-full px-4 py-2 rounded bg-black text-white border"
+            required
+          />
 
           <button
             type="submit"
-            className="w-full bg-gradient-to-r from-green-500 to-blue-600 
-                       hover:opacity-90 text-white 
-                       py-2.5 rounded-full 
-                       font-semibold text-sm 
-                       transition duration-300 hover:scale-105"
+            disabled={loading}
+            className="w-full bg-green-500 text-white py-2 rounded"
           >
-            Sign Up
+            {loading ? "Creating..." : "Sign Up"}
           </button>
 
         </form>
 
         <p className="text-gray-400 text-sm text-center mt-6">
           Already have an account?{" "}
-          <Link to="/login" className="text-green-400 hover:underline">
+          <Link to="/login" className="text-green-400">
             Login
           </Link>
         </p>
-
       </div>
     </section>
   );
