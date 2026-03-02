@@ -1,8 +1,15 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function ApplyForm() {
+  const navigate = useNavigate();
+
+  const handleCancel = () => {
+    navigate("/");
+  };
+
   return (
-    <section className="bg-black min-h-screen pt-24 pb-16 px-4">
+    <section className="bg-[rgb(11,14,31)] min-h-screen pt-24 pb-16 px-4">
 
       <div className="max-w-2xl mx-auto 
                       bg-gradient-to-br from-gray-900 to-gray-800 
@@ -21,6 +28,7 @@ export default function ApplyForm() {
 
         <form className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
+          {/* Full Name - First */}
           <div>
             <label className="text-green-400 text-sm font-medium">
               Full Name
@@ -34,6 +42,26 @@ export default function ApplyForm() {
                          focus:ring-2 focus:ring-green-500 
                          outline-none transition text-sm"
             />
+          </div>
+
+          {/* Loan Type - Second */}
+          <div>
+            <label className="text-green-400 text-sm font-medium">
+              Loan Type
+            </label>
+            <select
+              className="w-full mt-1 px-4 py-2.5 rounded-lg 
+                         bg-black/70 text-white 
+                         border border-gray-700 
+                         focus:ring-2 focus:ring-green-500 
+                         outline-none transition text-sm"
+            >
+              <option value="">Select Loan Type</option>
+              <option>Home Loan</option>
+              <option>Car Loan</option>
+              <option>Personal Loan</option>
+              <option>Business Loan</option>
+            </select>
           </div>
 
           <div>
@@ -96,7 +124,9 @@ export default function ApplyForm() {
             />
           </div>
 
-          <div className="md:col-span-2 text-center mt-3">
+          {/* Buttons */}
+          <div className="md:col-span-2 flex flex-col sm:flex-row gap-3 justify-center mt-3">
+            
             <button
               type="submit"
               className="w-full sm:w-auto 
@@ -112,6 +142,23 @@ export default function ApplyForm() {
             >
               Submit Application
             </button>
+
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="w-full sm:w-auto 
+                         bg-gradient-to-r from-red-500 to-pink-600 
+                         hover:opacity-90 
+                         text-white 
+                         px-8 py-2.5 
+                         rounded-full 
+                         font-semibold 
+                         text-sm
+                         shadow-lg 
+                         transition duration-300 hover:scale-105"
+            >
+              Cancel
+            </button>
           </div>
 
         </form>
@@ -123,5 +170,5 @@ export default function ApplyForm() {
       </div>
 
     </section>
-  );
+  );  
 }

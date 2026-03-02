@@ -1,6 +1,6 @@
 import React, { useState,useEffect } from "react";
 import { Link } from "react-router-dom";
-
+import { Facebook, Instagram, Linkedin } from "lucide-react";
 export default function LandingPage() {
 
   const [loanAmount, setLoanAmount] = useState(25000);
@@ -74,7 +74,7 @@ useEffect(() => {
     <div className="bg-white text-gray-900">
 
       {/* HERO */}
- <section className="pt-20 md:pt-24 pb-16 md:pb-20 bg-black">
+ <section className="pt-20 md:pt-24 pb-16 md:pb-20 bg-[rgb(11,14,31)]">
   <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
 
     {/* Left Content */}
@@ -125,9 +125,8 @@ useEffect(() => {
 </section>
 
       {/* QUICK MATCH BAR */}
-<section className="py-12 md:py-16 bg-black text-center">
+<section className="py-12 md:py-16 bg-[rgb(11,14,31)] text-center">
 
-  {/* Loan Process Progress Line */}
   <div className="w-full">
     <div className="max-w-5xl mx-auto relative px-4">
 
@@ -176,53 +175,12 @@ useEffect(() => {
 
       </div>
 
-      {/* Dynamic Messages */}
-      <div className="mt-8 sm:mt-10 text-white px-4">
-
-        {step === 2 && (
-          <p className="text-yellow-400 text-sm sm:text-base">
-            Before filling the form, a service fee will be charged.
-          </p>
-        )}
-
-        {step === 3 && !decision && (
-          <div className="mt-4">
-            <select
-              className="bg-gray-900 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl border border-green-500 text-sm sm:text-base w-full sm:w-auto"
-              onChange={(e) => {
-                setDecision(e.target.value);
-                if (e.target.value === "approved") {
-                  setTimeout(() => setStep(4), 1500);
-                }
-              }}
-            >
-              <option value="">Select Decision</option>
-              <option value="approved">Approved</option>
-              <option value="rejected">Rejected</option>
-            </select>
-          </div>
-        )}
-
-        {decision === "approved" && step === 4 && (
-          <p className="text-green-400 font-bold mt-6 text-sm sm:text-base">
-            ✅ Payment transfer successfully completed.
-          </p>
-        )}
-
-        {decision === "rejected" && (
-          <p className="text-red-400 font-bold mt-6 text-sm sm:text-base">
-            ❌ Application rejected. Your fee has been refunded.
-          </p>
-        )}
-
-      </div>
-
     </div>
   </div>
 </section>
 
 
-<section className="py-16 md:py-20 bg-black">
+<section className="py-16 md:py-20 bg-[rgb(11,14,31)]">
   <div className="max-w-6xl mx-auto px-6 text-center">
 
     {/* Heading */}
@@ -300,7 +258,7 @@ useEffect(() => {
   </div>
 </section>
       {/* EMI CALCULATOR */}
-    <section className="py-16 md:py-20 bg-black">
+    <section className="py-16 md:py-20 bg-[rgb(11,14,31)]">
   <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-10 md:gap-12 items-center">
 
     {/* Image */}
@@ -409,7 +367,7 @@ useEffect(() => {
   </div>
 </section>
       {/* LOAN CATEGORY */}
-  <section className="py-16 md:py-20 bg-black text-center">
+  <section className="py-16 md:py-20 bg-[rgb(11,14,31)] text-center">
 
   <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
     Explore Our Loan Solutions
@@ -487,7 +445,7 @@ useEffect(() => {
      
 
       {/* RATING SECTION */}
-<section className="py-16 bg-black text-center">
+<section className="py-16 bg-[rgb(11,14,31)] text-center">
 
   <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
     Trusted Across the United States 🇺🇸
@@ -502,7 +460,8 @@ useEffect(() => {
 
     <div className="flex gap-5 md:gap-6 snap-x snap-mandatory">
 
-      {[{
+      {[
+        {
           name: "James Wilson",
           location: "Dallas, TX",
           feedback:
@@ -533,7 +492,40 @@ useEffect(() => {
             "Very helpful support team. Platform is easy and transparent.",
           img: "https://randomuser.me/api/portraits/women/50.jpg",
           rating: 5
-        }].map((user, i) => (
+        },
+        {
+          name: "Ethan Lee",
+          location: "Chicago, IL",
+          feedback:
+            "Excellent experience. Clear guidance and fast approval.",
+          img: "https://randomuser.me/api/portraits/men/34.jpg",
+          rating: 5
+        },
+        {
+          name: "Ava Thompson",
+          location: "Houston, TX",
+          feedback:
+            "Quick, reliable, and very user-friendly platform. Highly recommend!",
+          img: "https://randomuser.me/api/portraits/women/44.jpg",
+          rating: 5
+        },
+        {
+          name: "Michael Scott",
+          location: "Philadelphia, PA",
+          feedback:
+            "Good service and prompt communication. Everything went smoothly.",
+          img: "https://randomuser.me/api/portraits/men/55.jpg",
+          rating: 4
+        },
+        {
+          name: "Emily Davis",
+          location: "San Francisco, CA",
+          feedback:
+            "Very satisfied with the support team. Transparent and fast process.",
+          img: "https://randomuser.me/api/portraits/women/30.jpg",
+          rating: 5
+        }
+      ].map((user, i) => (
         <div
           key={i}
           className="bg-gray-900 
@@ -541,14 +533,8 @@ useEffect(() => {
                      rounded-2xl 
                      shadow-md 
                      p-5 md:p-6
-                     w-[85%]          /* mobile */
-                     sm:w-[70%] 
-                     md:w-[45%] 
-                     lg:w-[32%] 
-                     min-w-[85%] 
-                     sm:min-w-[70%] 
-                     md:min-w-[45%] 
-                     lg:min-w-[32%]
+                     w-[85%] sm:w-[70%] md:w-[45%] lg:w-[32%] 
+                     min-w-[85%] sm:min-w-[70%] md:min-w-[45%] lg:min-w-[32%]
                      flex-shrink-0 
                      text-left 
                      snap-start"
@@ -588,9 +574,8 @@ useEffect(() => {
 </section>
 
 
-
     {/* PRE-QUALIFICATION FORM */}
-<section className="py-16 md:py-20 bg-black text-center px-4">
+<section className="py-16 md:py-20 bg-[rgb(11,14,31)] text-center px-4">
 
   <div className="max-w-4xl mx-auto bg-gray-900 p-6 sm:p-8 md:p-10 rounded-2xl shadow-xl border border-green-500/30">
 
@@ -669,85 +654,114 @@ useEffect(() => {
 
 
 {/* FOOTER */}
-<footer className="bg-black text-white pt-12 md:pt-16 pb-8 px-4 sm:px-6">
+<footer className="bg-[rgb(11,14,31)] text-white">
 
-  <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 text-left">
+  {/* TOP SECTION */}
+  <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16">
 
-    {/* Company Info */}
-    <div>
-      <h3 className="text-xl sm:text-2xl font-bold text-green-400 mb-4">
-        CredFlow
-      </h3>
-      <p className="text-gray-400 text-sm leading-relaxed">
-        CredFlow is a trusted U.S. online loan marketplace connecting borrowers 
-        with verified lenders for fast, secure, and transparent financial solutions.
-      </p>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 text-center lg:text-left">
 
-      <p className="mt-4 text-sm text-blue-400">
-        🇺🇸 Serving customers across the United States
-      </p>
+      {/* Company Info */}
+      <div>
+        <h3 className="text-2xl font-bold text-green-400 mb-5">
+          CredFlow
+        </h3>
+        <p className="text-gray-400 text-sm leading-relaxed max-w-sm mx-auto lg:mx-0">
+          CredFlow is a trusted U.S. online loan marketplace connecting borrowers 
+          with verified lenders for fast, secure, and transparent financial solutions.
+        </p>
+
+        <p className="mt-4 text-sm text-blue-400">
+          🇺🇸 Serving customers across the United States
+        </p>
+      </div>
+
+      {/* Loan Solutions */}
+      <div>
+        <h4 className="text-lg font-semibold text-green-400 mb-5">
+          Loan Solutions
+        </h4>
+        <ul className="space-y-3 text-gray-400 text-sm">
+          <li className="hover:text-green-400 transition cursor-pointer">Personal Loans</li>
+          <li className="hover:text-green-400 transition cursor-pointer">Business Financing</li>
+          <li className="hover:text-green-400 transition cursor-pointer">Debt Consolidation</li>
+          <li className="hover:text-green-400 transition cursor-pointer">Emergency Funding</li>
+          <li className="hover:text-green-400 transition cursor-pointer">Installment Loans</li>
+        </ul>
+      </div>
+
+      {/* Company */}
+      <div>
+        <h4 className="text-lg font-semibold text-green-400 mb-5">
+          Company
+        </h4>
+        <ul className="space-y-3 text-gray-400 text-sm">
+          <li className="hover:text-green-400 transition cursor-pointer">About CredFlow</li>
+          <li className="hover:text-green-400 transition cursor-pointer">How It Works</li>
+          <li className="hover:text-green-400 transition cursor-pointer">Careers</li>
+          <li className="hover:text-green-400 transition cursor-pointer">Partner With Us</li>
+          <li className="hover:text-green-400 transition cursor-pointer">FAQs</li>
+        </ul>
+      </div>
+
+      {/* Legal & Support */}
+      <div>
+        <h4 className="text-lg font-semibold text-green-400 mb-5">
+          Legal & Support
+        </h4>
+        <ul className="space-y-3 text-gray-400 text-sm">
+          <li className="hover:text-green-400 transition cursor-pointer">Privacy Policy</li>
+          <li className="hover:text-green-400 transition cursor-pointer">Terms & Conditions</li>
+          <li className="hover:text-green-400 transition cursor-pointer">Responsible Lending Policy</li>
+          <li>support@credflow.com</li>
+          <li>+1 (800) 456-7890</li>
+        </ul>
+      </div>
+
     </div>
-
-    {/* Loan Products */}
-    <div>
-      <h4 className="text-lg font-semibold text-green-400 mb-4">
-        Loan Solutions
-      </h4>
-      <ul className="space-y-2 text-gray-400 text-sm">
-        <li>Personal Loans</li>
-        <li>Business Financing</li>
-        <li>Debt Consolidation</li>
-        <li>Emergency Funding</li>
-        <li>Installment Loans</li>
-      </ul>
-    </div>
-
-    {/* Company Links */}
-    <div>
-      <h4 className="text-lg font-semibold text-green-400 mb-4">
-        Company
-      </h4>
-      <ul className="space-y-2 text-gray-400 text-sm">
-        <li>About CredFlow</li>
-        <li>How It Works</li>
-        <li>Careers</li>
-        <li>Partner With Us</li>
-        <li>FAQs</li>
-      </ul>
-    </div>
-
-    {/* Legal & Contact */}
-    <div>
-      <h4 className="text-lg font-semibold text-green-400 mb-4">
-        Legal & Support
-      </h4>
-      <ul className="space-y-2 text-gray-400 text-sm">
-        <li>Privacy Policy</li>
-        <li>Terms & Conditions</li>
-        <li>Responsible Lending Policy</li>
-        <li>support@credflow.com</li>
-        <li>+1 (800) 456-7890</li>
-      </ul>
-    </div>
-
   </div>
 
-  {/* Divider */}
-  <div className="border-t border-gray-800 mt-10 pt-6 text-center">
+  {/* BOTTOM BAR */}
+  <div className="border-t border-gray-800">
+    <div className="max-w-7xl mx-auto px-6 lg:px-8 py-8">
 
-    <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mb-4 text-gray-400 text-sm">
-      <span className="hover:text-green-400 cursor-pointer">Facebook</span>
-      <span className="hover:text-green-400 cursor-pointer">Twitter</span>
-      <span className="hover:text-green-400 cursor-pointer">LinkedIn</span>
-      <span className="hover:text-green-400 cursor-pointer">Instagram</span>
+      <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
+
+        {/* LEFT */}
+        <div className="text-gray-400 text-sm text-center lg:text-left">
+          © 2026 CredFlow. All rights reserved.
+        </div>
+
+        {/* CENTER */}
+        <div className="flex items-center gap-4">
+          <img
+            src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg"
+            alt="App Store"
+            className="h-10 hover:scale-105 transition cursor-pointer"
+          />
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
+            alt="Google Play"
+            className="h-10 hover:scale-105 transition cursor-pointer"
+          />
+        </div>
+
+        {/* RIGHT */}
+        <div className="flex items-center gap-6 text-gray-400">
+          <Facebook className="hover:text-green-400 cursor-pointer transition" />
+          <Instagram className="hover:text-green-400 cursor-pointer transition" />
+          <Linkedin className="hover:text-green-400 cursor-pointer transition" />
+        </div>
+
+      </div>
+
+      {/* Legal Text */}
+      <div className="mt-8 text-center text-gray-500 text-xs max-w-3xl mx-auto leading-relaxed">
+        CredFlow is not a direct lender. We connect borrowers with independent third-party lenders. 
+        Loan approval and terms are subject to lender evaluation and state regulations.
+      </div>
+
     </div>
-
-    <p className="text-gray-500 text-xs sm:text-sm leading-relaxed max-w-3xl mx-auto">
-      © 2026 CredFlow. All rights reserved.  
-      CredFlow is not a direct lender. We connect borrowers with independent third-party lenders. 
-      Loan approval and terms are subject to lender evaluation and state regulations.
-    </p>
-
   </div>
 
 </footer>

@@ -13,27 +13,29 @@ export default function Login() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
+  e.preventDefault();
+  setLoading(true);
+  setError("");
 
-    try {
-      const response = await API.post("auth/login", formData);
-      console.log("Login Response:", response.data);
+  try {
+    const response = await API.post("auth/login", formData);
 
-      // redirect to landing page after successful login
-      navigate("/"); // <-- changed here
-    } catch (err) {
-      console.error(err);
-      if (err.response && err.response.data && err.response.data.message) {
-        setError(err.response.data.message);
-      } else {
-        setError("Something went wrong. Please try again.");
-      }
-    } finally {
-      setLoading(false);
+    if (response.data.user) {
+      localStorage.setItem("user", JSON.stringify(response.data.user));
     }
-  };
+
+    navigate("/admin");
+
+  } catch (err) {
+    if (err.response?.data?.message) {
+      setError(err.response.data.message);
+    } else {
+      setError("Something went wrong");
+    }
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <section className="bg-black min-h-screen pt-24 pb-16 px-4">
@@ -103,7 +105,6 @@ export default function Login() {
           </button>
         </form>
 
-        {/* Divider */}
         <div className="mt-6 border-t border-gray-700 pt-4 text-center">
           <p className="text-gray-400 text-xs sm:text-sm">
             Don’t have an account?{" "}
