@@ -1,174 +1,245 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function ApplyForm() {
   const navigate = useNavigate();
+  const [step, setStep] = useState(1);
 
-  const handleCancel = () => {
-    navigate("/");
+  const handleCancel = () => navigate("/");
+
+  const nextStep = () => {
+    if (step < 3) setStep(step + 1);
   };
 
+  const prevStep = () => {
+    if (step > 1) setStep(step - 1);
+  };
+
+  const inputStyle =
+    "w-full mt-1 px-4 py-2 rounded-lg bg-black/60 text-white border border-gray-700 \
+    focus:bg-black focus:ring-2 focus:ring-green-500 \
+    hover:border-green-500 hover:bg-black/70 \
+    outline-none transition text-sm";
+
   return (
-    <section className="bg-[rgb(11,14,31)] min-h-screen pt-24 pb-16 px-4">
+    <section className="bg-[rgb(11,14,31)] min-h-screen pt-25 pb-12 px-4">
 
-      <div className="max-w-2xl mx-auto 
-                      bg-gradient-to-br from-gray-900 to-gray-800 
-                      p-6 sm:p-8 
-                      rounded-2xl 
-                      shadow-2xl 
-                      border border-green-500/20">
+      {/* Autofill Fix */}
+      <style>
+        {`
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus,
+        textarea:-webkit-autofill,
+        select:-webkit-autofill {
+          -webkit-box-shadow: 0 0 0px 1000px #000 inset !important;
+          box-shadow: 0 0 0px 1000px #000 inset !important;
+          -webkit-text-fill-color: #fff !important;
+          transition: background-color 5000s ease-in-out 0s;
+        }
+      `}
+      </style>
 
-        <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3 text-center">
+      <div className="max-w-xl mx-auto bg-gradient-to-br from-gray-900 to-gray-800 p-5 sm:p-6 rounded-2xl shadow-2xl border border-green-500/20">
+
+        {/* Heading */}
+        <h2 className="text-xl sm:text-2xl font-bold text-white mb-6 text-center">
           Loan Enquiry Form
         </h2>
 
-        <p className="text-gray-400 text-center mb-8 text-sm">
-          Get matched with verified lenders in minutes.
-        </p>
+        {/* Step Indicator */}
+    {/* Step Indicator */}
+<div className="relative flex items-center justify-between mb-2 px-6">
 
-        <form className="grid grid-cols-1 md:grid-cols-2 gap-5">
+  {/* Background Line (center se center tak) */}
+  <div className="absolute top-4 left-[17.5%] right-[17.5%] h-0.5 bg-gray-700"></div>
 
-          {/* Full Name - First */}
-          <div>
-            <label className="text-green-400 text-sm font-medium">
-              Full Name
-            </label>
-            <input
-              type="text"
-              placeholder="John Smith"
-              className="w-full mt-1 px-4 py-2.5 rounded-lg 
-                         bg-black/70 text-white 
-                         border border-gray-700 
-                         focus:ring-2 focus:ring-green-500 
-                         outline-none transition text-sm"
-            />
-          </div>
+  {/* Active Progress Line */}
+  <div
+    className="absolute top-4 left-[17.5%] h-0.5 bg-green-500 transition-all duration-500"
+    style={{
+      width:
+        step === 1
+          ? "0%"
+          : step === 2
+          ? "35.5%"
+          : "65%",
+    }}
+  ></div>
 
-          {/* Loan Type - Second */}
-          <div>
-            <label className="text-green-400 text-sm font-medium">
-              Loan Type
-            </label>
-            <select
-              className="w-full mt-1 px-4 py-2.5 rounded-lg 
-                         bg-black/70 text-white 
-                         border border-gray-700 
-                         focus:ring-2 focus:ring-green-500 
-                         outline-none transition text-sm"
-            >
-              <option value="">Select Loan Type</option>
-              <option>Home Loan</option>
-              <option>Car Loan</option>
-              <option>Personal Loan</option>
-              <option>Business Loan</option>
-            </select>
-          </div>
+  {[1, 2, 3].map((item) => (
+    <div key={item} className="relative z-10 flex flex-col items-center w-1/3">
+      <div
+        className={`w-10 h-10 flex items-center justify-center rounded-full text-sm font-semibold transition
+        ${
+          step >= item
+            ? "bg-green-500 text-black"
+            : "bg-gray-700 text-gray-300"
+        }`}
+      >
+        {item}
+      </div>
 
-          <div>
-            <label className="text-green-400 text-sm font-medium">
-              Email Address
-            </label>
-            <input
-              type="email"
-              placeholder="example@email.com"
-              className="w-full mt-1 px-4 py-2.5 rounded-lg 
-                         bg-black/70 text-white 
-                         border border-gray-700 
-                         focus:ring-2 focus:ring-green-500 
-                         outline-none transition text-sm"
-            />
-          </div>
+      <span className="text-xs mt-2 text-gray-400">
+        {item === 1 && "Basic"}
+        {item === 2 && "Loan"}
+        {item === 3 && "Financial"}
+      </span>
+    </div>
+  ))}
+</div>
 
-          <div>
-            <label className="text-green-400 text-sm font-medium">
-              Phone Number
-            </label>
-            <input
-              type="tel"
-              placeholder="+1 234 567 8900"
-              className="w-full mt-1 px-4 py-2.5 rounded-lg 
-                         bg-black/70 text-white 
-                         border border-gray-700 
-                         focus:ring-2 focus:ring-green-500 
-                         outline-none transition text-sm"
-            />
-          </div>
+        <form className="space-y-5">
 
-          <div>
-            <label className="text-green-400 text-sm font-medium">
-              State ID
-            </label>
-            <input
-              type="text"
-              placeholder="Driver License / ID"
-              className="w-full mt-1 px-4 py-2.5 rounded-lg 
-                         bg-black/70 text-white 
-                         border border-gray-700 
-                         focus:ring-2 focus:ring-green-500 
-                         outline-none transition text-sm"
-            />
-          </div>
+          {/* ================= STEP 1 ================= */}
+          {step === 1 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-green-400 text-sm">Full Name</label>
+                <input type="text" className={inputStyle} />
+              </div>
 
-          <div className="md:col-span-2">
-            <label className="text-green-400 text-sm font-medium">
-              SSN Number
-            </label>
-            <input
-              type="password"
-              placeholder="XXX-XX-XXXX"
-              className="w-full mt-1 px-4 py-2.5 rounded-lg 
-                         bg-black/70 text-white 
-                         border border-gray-700 
-                         focus:ring-2 focus:ring-green-500 
-                         outline-none transition text-sm"
-            />
-          </div>
+              <div>
+                <label className="text-green-400 text-sm">Email</label>
+                <input type="email" className={inputStyle} />
+              </div>
+
+              <div>
+                <label className="text-green-400 text-sm">Mobile Number</label>
+                <input type="tel" className={inputStyle} />
+              </div>
+
+              <div>
+                <label className="text-green-400 text-sm">State</label>
+                <input type="text" className={inputStyle} />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="text-green-400 text-sm">Zip Code</label>
+                <input type="text" className={inputStyle} />
+              </div>
+            </div>
+          )}
+
+          {/* ================= STEP 2 ================= */}
+          {step === 2 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-green-400 text-sm">Loan Type</label>
+                <select className={inputStyle}>
+                  <option value="">Select Loan Type</option>
+                  <option value="personal">Personal</option>
+                  <option value="auto">Auto</option>
+                  <option value="mortgage">Mortgage</option>
+                  <option value="business">Business</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-green-400 text-sm">Loan Amount</label>
+                <input type="number" className={inputStyle} />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="text-green-400 text-sm">Loan Purpose</label>
+                <input type="text" className={inputStyle} />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="text-green-400 text-sm">Preferred Contact</label>
+                <select className={inputStyle}>
+                  <option value="call">Call</option>
+                  <option value="email">Email</option>
+                  <option value="sms">SMS</option>
+                </select>
+              </div>
+            </div>
+          )}
+
+          {/* ================= STEP 3 ================= */}
+          {step === 3 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-green-400 text-sm">Employment Status</label>
+                <select className={inputStyle}>
+                  <option value="">Select</option>
+                  <option value="employed">Employed</option>
+                  <option value="self_employed">Self Employed</option>
+                  <option value="unemployed">Unemployed</option>
+                  <option value="retired">Retired</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-green-400 text-sm">Monthly Income</label>
+                <select className={inputStyle}>
+                  <option>0-2000</option>
+                  <option>2000-4000</option>
+                  <option>4000-7000</option>
+                  <option>7000-10000</option>
+                  <option>10000+</option>
+                </select>
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="text-green-400 text-sm">Credit Score Range</label>
+                <select className={inputStyle}>
+                  <option>300-579</option>
+                  <option>580-669</option>
+                  <option>670-739</option>
+                  <option>740+</option>
+                </select>
+              </div>
+            </div>
+          )}
 
           {/* Buttons */}
-          <div className="md:col-span-2 flex flex-col sm:flex-row gap-3 justify-center mt-3">
-            
-            <button
-              type="submit"
-              className="w-full sm:w-auto 
-                         bg-gradient-to-r from-green-500 to-blue-600 
-                         hover:opacity-90 
-                         text-white 
-                         px-8 py-2.5 
-                         rounded-full 
-                         font-semibold 
-                         text-sm
-                         shadow-lg 
-                         transition duration-300 hover:scale-105"
-            >
-              Submit Application
-            </button>
+          <div className="flex justify-between pt-4 flex-wrap gap-3">
+
+            {step > 1 && (
+              <button
+                type="button"
+                onClick={prevStep}
+                className="px-5 py-2 rounded-full bg-gray-700 text-white hover:bg-gray-600 transition"
+              >
+                Back
+              </button>
+            )}
+
+            {step < 3 && (
+              <button
+                type="button"
+                onClick={nextStep}
+                className="ml-auto bg-gradient-to-r from-green-500 to-blue-600 text-white px-7 py-2 rounded-full font-semibold shadow-lg hover:scale-105 transition"
+              >
+                Next
+              </button>
+            )}
+
+            {step === 3 && (
+              <button
+                type="submit"
+                className="ml-auto bg-gradient-to-r from-green-500 to-blue-600 text-white px-7 py-2 rounded-full font-semibold shadow-lg hover:scale-105 transition"
+              >
+                Submit Enquiry
+              </button>
+            )}
 
             <button
               type="button"
               onClick={handleCancel}
-              className="w-full sm:w-auto 
-                         bg-gradient-to-r from-red-500 to-pink-600 
-                         hover:opacity-90 
-                         text-white 
-                         px-8 py-2.5 
-                         rounded-full 
-                         font-semibold 
-                         text-sm
-                         shadow-lg 
-                         transition duration-300 hover:scale-105"
+              className="bg-gradient-to-r from-red-500 to-pink-600 text-white px-5 py-2 rounded-full font-semibold shadow-lg hover:scale-105 transition"
             >
               Cancel
             </button>
-          </div>
 
+          </div>
         </form>
 
-        <p className="text-xs text-gray-500 text-center mt-6">
+        <p className="text-xs text-gray-500 text-center mt-5">
           🔒 256-bit SSL encrypted. Your data stays secure.
         </p>
-
       </div>
-
     </section>
-  );  
+  );
 }

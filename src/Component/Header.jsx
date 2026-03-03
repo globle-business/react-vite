@@ -28,25 +28,25 @@ export default function Header() {
     console.log("User Logged Out");
     localStorage.removeItem("user");
     localStorage.removeItem("token");
-    window.location.href = "/login"; // redirect
+    window.location.href = "/login";
   };
 
   return (
     <>
-      <header className="bg-[rgb(11,14,31)] shadow-lg px-6 py-4 flex justify-between items-center relative">
+      <header className="bg-[rgb(11,14,31)] shadow-lg px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 relative">
         
         {/* Left Section */}
-        <div>
-          <h1 className="text-xl font-semibold text-green-400">
+        <div className="text-center sm:text-left w-full sm:w-auto">
+          <h1 className="text-lg sm:text-xl font-semibold text-green-400">
             Welcome 👋
           </h1>
-          <p className="text-sm text-blue-300">
+          <p className="text-xs sm:text-sm text-blue-300">
             {dayName} | {formattedDate} | {formattedTime}
           </p>
         </div>
 
         {/* Right Section */}
-        <div className="flex items-center gap-6 relative">
+        <div className="flex items-center gap-4 sm:gap-6 relative w-full sm:w-auto justify-end">
 
           {/* 🔔 Bell */}
           <div className="relative cursor-pointer">
@@ -54,8 +54,8 @@ export default function Header() {
             <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-[rgb(11,14,31)]"></span>
           </div>
 
-          {/* ✅ Profile Circle With First Letter */}
-          <div className="w-9 h-9 flex items-center justify-center text-white font-bold bg-gradient-to-r from-blue-500 to-green-500 rounded-full shadow-md">
+          {/* ✅ Profile Circle */}
+          <div className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-white font-bold bg-gradient-to-r from-blue-500 to-green-500 rounded-full shadow-md text-sm sm:text-base">
             {firstLetter}
           </div>
 
@@ -66,13 +66,12 @@ export default function Header() {
           >
             <MoreVertical className="text-blue-400 hover:text-green-400 transition" />
           </div>
-
         </div>
       </header>
 
       {/* Dropdown */}
       {openModal && (
-        <div className="absolute right-6 top-20 bg-[rgb(18,22,45)] text-white shadow-2xl rounded-lg w-48 border border-blue-900 z-50">
+        <div className="absolute right-4 sm:right-6 top-24 sm:top-20 bg-[rgb(18,22,45)] text-white shadow-2xl rounded-lg w-44 sm:w-48 border border-blue-900 z-50">
 
           <div className="px-4 py-3 hover:bg-blue-900/40 cursor-pointer flex items-center gap-2">
             <User size={18} className="text-green-400" />

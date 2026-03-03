@@ -37,14 +37,14 @@ export default function Signup() {
       // ✅ Signup API Call
       const res = await API.post("auth/signup", formData);
 
-      console.log("Signup Success:", res.data);
+setMessage("Signup Successful ✅ Redirecting to Send OTP...");
 
-      setMessage("Signup Successful ✅ Redirecting to Send OTP...");
+// ✅ ADD THIS LINE
+localStorage.setItem("email", formData.email);
 
-      // ✅ Redirect after success
-      setTimeout(() => {
-        navigate("/sendotp", { state: formData });
-      }, 1000);
+setTimeout(() => {
+  navigate("/sendotp");
+}, 1000);
 
     } catch (error) {
       console.log(error);

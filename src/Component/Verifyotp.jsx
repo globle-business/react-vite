@@ -5,23 +5,24 @@ import API from "../api/axios"; // your axios instance
 export default function VerifyOtp() {
   const navigate = useNavigate();
   const [otp, setOtp] = useState("");
-  const [email, setEmail] = useState(""); // optionally get email from state or localStorage
+
   const [message, setMessage] = useState("");
 
   const handleVerify = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await API.post("/auth/verify-otp", {
-        email: localStorage.getItem("email"), // or however you store the email
-        otp,
-      });
+     const res = await API.post("/auth/verify-otp", {
+  email: localStorage.getItem("email") || "",
+  otp,
+});
+     setMessage(res.data.message);
 
-      setMessage(res.data.message);
+localStorage.removeItem("email"); // ✅ ADD THIS
 
-      setTimeout(() => {
-        navigate("/login");
-      }, 1500);
+setTimeout(() => {
+  navigate("/login");
+}, 1500);
     } catch (err) {
       // handle error
       if (err.response && err.response.data) {
