@@ -8,7 +8,7 @@ import ApplyForm from './Component/ApplyForm';
 import Login from './Component/Login';
 import Signup from './Component/Signup';
 import VerifyOtp from './Component/Verifyotp';
-import SendOtp from './Component/Sendotp';
+import SendOtp from './Component/SendOtp';
 
 // Admin Imports
 import AdminLayout from "./pages/AdminDashboard/AdminLayout";
