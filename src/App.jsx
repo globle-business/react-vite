@@ -17,6 +17,10 @@ import CostomerRecords from './pages/AdminDashboard/CustomerRecords';
 import AdminEnquirie from './pages/AdminDashboard/Enquirie';
 import Profile from './pages/AdminDashboard/Profile';
 import LoanType from './pages/AdminDashboard/LoanType';
+import Disbursement from './pages/AdminDashboard/Disbursement';
+import LoanApproval from './pages/AdminDashboard/LoanApproval';
+import LoanProcessing from './pages/AdminDashboard/LoanProcessing';
+import Documents from './pages/AdminDashboard/Documents';
 
 function App() {
   return (
@@ -38,6 +42,10 @@ function App() {
         <Route path="customer" element={<CostomerRecords />} />
         <Route path="enquiry" element={<AdminEnquirie />} />
         <Route path="loantype" element={<LoanType />} />
+        <Route path='distribute' element={<Disbursement/>}/>
+        <Route path='doqument' element={<Documents/>}/>
+        <Route path='loanapprove' element={<LoanApproval/>}/>
+        <Route path='loanprocess' element={<LoanProcessing/>}/>
         <Route path="profile" element={<Profile />} />
       </Route>
 

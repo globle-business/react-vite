@@ -13,7 +13,7 @@ export default function Sidebar() {
     }`;
 
   return (
-    <aside className="w-64 bg-[rgb(11,14,31)] text-white min-h-screen px-6 py-6 flex flex-col">
+    <aside className="w-64 bg-[rgb(11,14,31)] text-white h-screen px-6 py-6 flex flex-col md:relative fixed left-0 top-0">
 
       {/* Logo Section */}
       <div className="mb-6">
@@ -21,12 +21,11 @@ export default function Sidebar() {
           CredFlow
         </h1>
 
-        {/* Full Divider Line */}
         <div className="w-full h-[1px] bg-blue-900 mt-4"></div>
       </div>
 
-      {/* Top Navigation */}
-      <nav className="space-y-3 flex-1 mt-4">
+      {/* Navigation */}
+      <nav className="space-y-3 flex-1 mt-4 overflow-y-auto">
 
         <Link to="/admin" className={linkStyle("/admin/home")}>
           <LayoutDashboard size={22} />
@@ -43,11 +42,30 @@ export default function Sidebar() {
           Enquiry
         </Link>
 
-           <Link to="/admin/loantype" className={linkStyle("/admin/loantype")}>
+        <Link to="/admin/loantype" className={linkStyle("/admin/loantype")}>
           <MessageCircle size={22} />
           Loantype
         </Link>
 
+        <Link to="/admin/distribute" className={linkStyle("/admin/distribute")}>
+          <MessageCircle size={22} />
+          Disbursement
+        </Link>
+
+        <Link to="/admin/doqument" className={linkStyle("/admin/doqument")}>
+          <MessageCircle size={22} />
+          Documents
+        </Link>
+
+        <Link to="/admin/loanapprove" className={linkStyle("/admin/loanapprove")}>
+          <MessageCircle size={22} />
+          LoanApproval
+        </Link>
+
+        <Link to="/admin/loanprocess" className={linkStyle("/admin/loanprocess")}>
+          <MessageCircle size={22} />
+          LoanProcessing
+        </Link>
 
       </nav>
 

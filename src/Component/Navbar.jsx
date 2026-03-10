@@ -123,13 +123,17 @@ function Navbar() {
           <a href="#" className="block text-blue-400 hover:text-green-400">FAQ</a>
           <a href="#" className="block text-blue-400 hover:text-green-400">Contact</a>
 
-          <button className="w-full border border-blue-500 text-blue-400 py-2 rounded-full">
-            Sign In
-          </button>
+         <Link to="/login">
+  <button className="w-full border border-blue-500 text-blue-400 py-2 rounded-full">
+    Sign In
+  </button>
+</Link>
 
-          <button className="w-full bg-gradient-to-r from-blue-600 to-green-500 text-white py-2 rounded-full font-semibold">
-            Signup
-          </button>
+<Link to="/signup">
+  <button className="w-full bg-gradient-to-r from-blue-600 to-green-500 text-white py-2 rounded-full font-semibold">
+    Signup
+  </button>
+</Link>
         </div>
       )}
     </header>

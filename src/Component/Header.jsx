@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { Bell, MoreVertical, User, LogOut } from "lucide-react";
+import { useSelector } from "react-redux";
 
 export default function Header() {
   const [time, setTime] = useState(new Date());
   const [openModal, setOpenModal] = useState(false);
 
-  // ✅ Get Logged In User
+  // Redux user (agar store me ho)
+  const reduxUser = useSelector((state) => state?.auth?.user);
+
+  // LocalStorage user (existing logic)
   const storedUser = JSON.parse(localStorage.getItem("user")) || {};
-  const firstLetter = storedUser?.Username
-    ? storedUser.Username.charAt(0).toUpperCase()
-    : "?";
+
+  // Username priority: Redux → LocalStorage
+  const username = reduxUser?.Username || storedUser?.Username || "";
+
+  const firstLetter = username ? username.charAt(0).toUpperCase() : "?";
 
   // ⏰ Live Time
   useEffect(() => {
@@ -38,7 +44,7 @@ export default function Header() {
         {/* Left Section */}
         <div className="text-center sm:text-left w-full sm:w-auto">
           <h1 className="text-lg sm:text-xl font-semibold text-green-400">
-            Welcome 👋
+            Welcome 👋 {username}
           </h1>
           <p className="text-xs sm:text-sm text-blue-300">
             {dayName} | {formattedDate} | {formattedTime}
@@ -54,7 +60,7 @@ export default function Header() {
             <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-[rgb(11,14,31)]"></span>
           </div>
 
-          {/* ✅ Profile Circle */}
+          {/* Profile Circle */}
           <div className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-white font-bold bg-gradient-to-r from-blue-500 to-green-500 rounded-full shadow-md text-sm sm:text-base">
             {firstLetter}
           </div>

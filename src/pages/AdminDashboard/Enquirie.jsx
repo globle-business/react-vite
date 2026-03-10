@@ -1,66 +1,101 @@
-import React, { useState } from "react";
-import { Eye, CheckCircle, XCircle } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Eye, CheckCircle, XCircle, MoreVertical } from "lucide-react";
+import API from "../../api/axios";
 
 export default function AdminEnquirie() {
 
-  const [enquiries, setEnquiries] = useState([
-    {
-      id: "ENQ-1001",
-      name: "John Anderson",
-      email: "john@email.com",
-      phone: "+1 202-555-0178",
-      loanType: "Home Loan",
-      amount: "$150,000",
-      status: "Pending",
-      startDate: "2026-03-01",
-      purpose: "Buying new house with better location",
-      message: "Looking for home loan with low interest rate."
-    },
-    {
-      id: "ENQ-1002",
-      name: "Emily Carter",
-      email: "emily@email.com",
-      phone: "+1 202-555-0123",
-      loanType: "Car Loan",
-      amount: "$25,000",
-      status: "Approved",
-      startDate: "2026-02-25",
-      purpose: "Purchase new car for family",
-      message: "Need car loan for 5 years."
-    },
-    {
-      id: "ENQ-1003",
-      name: "Michael Smith",
-      email: "michael@email.com",
-      phone: "+1 202-555-0145",
-      loanType: "Personal Loan",
-      amount: "$10,000",
-      status: "Rejected",
-      startDate: "2026-02-20",
-      purpose: "Medical emergency support",
-      message: "Urgent personal loan requirement."
-    }
-  ]);
-
+  const [enquiries, setEnquiries] = useState([]);
   const [selectedEnquiry, setSelectedEnquiry] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [openMenu, setOpenMenu] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const total = enquiries.length;
-  const pending = enquiries.filter(e => e.status === "Pending").length;
-  const approved = enquiries.filter(e => e.status === "Approved").length;
+  /* ================= GET ALL ENQUIRIES ================= */
+
+  const fetchEnquiries = async () => {
+    try {
+
+      const res = await API.get("/loan-enquiries/all-enquiries");
+
+      setEnquiries(res.data.enquiries || []);
+
+    } catch (error) {
+
+      console.error("Error fetching enquiries", error);
+
+    } finally {
+
+      setLoading(false);
+
+    }
+  };
+
+  useEffect(() => {
+    fetchEnquiries();
+  }, []);
+
+  /* ================= GET SINGLE ================= */
+
+  const handleView = async (id) => {
+    try {
+
+      const res = await API.get(`/loan-enquiries/enquiry/${id}`);
+
+      setSelectedEnquiry(res.data.enquiry);
+      setShowModal(true);
+
+    } catch (error) {
+
+      console.error("Error fetching enquiry", error);
+
+    }
+  };
+
+  /* ================= DELETE ================= */
+
+  const handleDelete = async (id) => {
+    try {
+
+      await API.delete(`/loan-enquiries/delete-enquiry/${id}`);
+
+      setEnquiries(enquiries.filter((e) => e._id !== id));
+      setOpenMenu(null);
+
+    } catch (error) {
+
+      console.error("Delete error", error);
+
+    }
+  };
+
+  /* ================= STATUS UI (LOCAL) ================= */
 
   const updateStatus = (id, newStatus) => {
-    setEnquiries(enquiries.map(e =>
-      e.id === id ? { ...e, status: newStatus } : e
-    ));
+    setEnquiries(
+      enquiries.map((e) =>
+        e._id === id ? { ...e, status: newStatus } : e
+      )
+    );
+    setOpenMenu(null);
   };
+
+  const total = enquiries.length;
+  const pending = enquiries.filter((e) => e.status === "Pending").length;
+  const approved = enquiries.filter((e) => e.status === "Approved").length;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex justify-center items-center text-white">
+        Loading enquiries...
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-[#0f172a] via-[#111827] to-[#1e293b]">
 
       <div className="w-full px-4 sm:px-6 lg:px-8 py-6 text-white">
 
-        {/* HEADER */}
         <h1 className="text-2xl sm:text-3xl font-bold text-cyan-400 mb-6">
           Loan Enquiries
         </h1>
@@ -85,7 +120,7 @@ export default function AdminEnquirie() {
 
         </div>
 
-        {/* TABLE CONTAINER */}
+        {/* TABLE */}
         <div className="bg-gray-900/70 border border-gray-700 rounded-xl overflow-x-auto">
 
           <table className="w-full text-left text-sm min-w-[900px]">
@@ -106,76 +141,115 @@ export default function AdminEnquirie() {
             <tbody>
               {enquiries.map((enq) => (
                 <tr
-                  key={enq.id}
+                  key={enq._id}
                   className="border-b border-gray-800 hover:bg-indigo-900/20 transition"
                 >
-                  <td className="p-4 whitespace-nowrap">{enq.id}</td>
+
+                  <td className="p-4 whitespace-nowrap">
+                    {enq._id.slice(-6)}
+                  </td>
 
                   <td className="p-4">
                     <div className="flex flex-col">
-                      <span className="font-semibold">{enq.name}</span>
+                      <span className="font-semibold">{enq.fullName}</span>
                       <span className="text-xs text-gray-400 break-all">
                         {enq.email}
                       </span>
                       <span className="text-xs text-gray-400">
-                        {enq.phone}
+                        {enq.mobileNumber}
                       </span>
                     </div>
                   </td>
 
-                  <td className="p-4 whitespace-nowrap">{enq.loanType}</td>
+                  <td className="p-4 whitespace-nowrap">
+                    {enq.loanType || "N/A"}
+                  </td>
 
-                  <td className="p-4 whitespace-nowrap">{enq.amount}</td>
+                  <td className="p-4 whitespace-nowrap">
+                    {enq.loanAmount || "N/A"}
+                  </td>
 
-                  <td className="p-4 whitespace-nowrap">{enq.startDate}</td>
+                  <td className="p-4 whitespace-nowrap">
+                    {new Date(enq.createdAt).toLocaleDateString()}
+                  </td>
 
-                  {/* PURPOSE TWO LINES */}
                   <td className="p-4 max-w-[180px]">
                     <p className="line-clamp-2">
-                      {enq.purpose}
+                      {enq.loanPurpose || "N/A"}
                     </p>
                   </td>
 
                   <td className="p-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      enq.status === "Pending"
-                        ? "bg-yellow-600/30 text-yellow-400"
-                        : enq.status === "Approved"
-                        ? "bg-emerald-600/30 text-emerald-400"
-                        : "bg-red-600/30 text-red-400"
-                    }`}>
-                      {enq.status}
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        enq.status === "Pending"
+                          ? "bg-yellow-600/30 text-yellow-400"
+                          : enq.status === "Approved"
+                          ? "bg-emerald-600/30 text-emerald-400"
+                          : "bg-red-600/30 text-red-400"
+                      }`}
+                    >
+                      {enq.status || "Pending"}
                     </span>
                   </td>
 
-                  <td className="p-4">
-                    <div className="flex justify-center items-center gap-4">
+                  {/* ACTION MENU */}
+                  <td className="p-4 relative">
+
+                    <div className="flex justify-center">
 
                       <button
-                        onClick={() => {
-                          setSelectedEnquiry(enq);
-                          setShowModal(true);
-                        }}
-                        className="text-sky-400 hover:scale-110 transition"
+                        onClick={() =>
+                          setOpenMenu(openMenu === enq._id ? null : enq._id)
+                        }
+                        className="text-gray-300 hover:text-white"
                       >
-                        <Eye size={18} />
+                        <MoreVertical size={20} />
                       </button>
 
-                      <button
-                        onClick={() => updateStatus(enq.id, "Approved")}
-                        className="text-emerald-400 hover:scale-110 transition"
-                      >
-                        <CheckCircle size={18} />
-                      </button>
+                      {openMenu === enq._id && (
+                        <div className="absolute right-6 top-10 bg-gray-800 border border-gray-700 rounded-lg shadow-lg w-36 z-20">
 
-                      <button
-                        onClick={() => updateStatus(enq.id, "Rejected")}
-                        className="text-red-400 hover:scale-110 transition"
-                      >
-                        <XCircle size={18} />
-                      </button>
+                          <button
+                            onClick={() => {
+                              handleView(enq._id);
+                              setOpenMenu(null);
+                            }}
+                            className="flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-700 text-sm"
+                          >
+                            <Eye size={16} /> View
+                          </button>
+
+                          <button
+                            onClick={() =>
+                              updateStatus(enq._id, "Approved")
+                            }
+                            className="flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-700 text-sm text-emerald-400"
+                          >
+                            <CheckCircle size={16} /> Approve
+                          </button>
+
+                          <button
+                            onClick={() =>
+                              updateStatus(enq._id, "Rejected")
+                            }
+                            className="flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-700 text-sm text-red-400"
+                          >
+                            <XCircle size={16} /> Reject
+                          </button>
+
+                          <button
+                            onClick={() => handleDelete(enq._id)}
+                            className="flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-700 text-sm text-red-500"
+                          >
+                            Delete
+                          </button>
+
+                        </div>
+                      )}
 
                     </div>
+
                   </td>
 
                 </tr>
@@ -190,6 +264,7 @@ export default function AdminEnquirie() {
       {/* MODAL */}
       {showModal && selectedEnquiry && (
         <div className="fixed inset-0 bg-black/70 flex justify-center items-center p-4 z-50">
+
           <div className="bg-gray-800 p-6 rounded-xl w-full max-w-md max-h-[90vh] overflow-y-auto text-white">
 
             <h2 className="text-xl font-bold mb-4 text-cyan-400">
@@ -197,15 +272,11 @@ export default function AdminEnquirie() {
             </h2>
 
             <div className="space-y-2 text-sm">
-              <p><strong>ID:</strong> {selectedEnquiry.id}</p>
-              <p><strong>Name:</strong> {selectedEnquiry.name}</p>
+              <p><strong>Name:</strong> {selectedEnquiry.fullName}</p>
               <p><strong>Email:</strong> {selectedEnquiry.email}</p>
-              <p><strong>Phone:</strong> {selectedEnquiry.phone}</p>
-              <p><strong>Loan Type:</strong> {selectedEnquiry.loanType}</p>
-              <p><strong>Amount:</strong> {selectedEnquiry.amount}</p>
-              <p><strong>Date:</strong> {selectedEnquiry.startDate}</p>
-              <p><strong>Purpose:</strong> {selectedEnquiry.purpose}</p>
-              <p><strong>Message:</strong> {selectedEnquiry.message}</p>
+              <p><strong>Phone:</strong> {selectedEnquiry.mobileNumber}</p>
+              <p><strong>State:</strong> {selectedEnquiry.state}</p>
+              <p><strong>Zip Code:</strong> {selectedEnquiry.zipCode}</p>
             </div>
 
             <button
@@ -216,6 +287,7 @@ export default function AdminEnquirie() {
             </button>
 
           </div>
+
         </div>
       )}
 

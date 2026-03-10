@@ -22,9 +22,16 @@ export default function Login() {
 
     if (response.data.user) {
       localStorage.setItem("user", JSON.stringify(response.data.user));
-    }
 
-    navigate("/admin");
+      const role = response.data.user.role;
+
+      // ✅ role based redirect
+      if (role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/dashboard");
+      }
+    }
 
   } catch (err) {
     if (err.response?.data?.message) {

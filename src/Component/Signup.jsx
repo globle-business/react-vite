@@ -10,6 +10,7 @@ export default function Signup() {
     email: "",
     password: "",
     mobile: "",
+    role: "user",
   });
 
   const [message, setMessage] = useState("");
@@ -25,8 +26,35 @@ export default function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // ✅ Required fields validation
     if (!formData.Username || !formData.email || !formData.password || !formData.mobile) {
       setMessage("All fields are required ❗");
+      return;
+    }
+
+    // ✅ Username validation
+    if (formData.Username.length < 3) {
+      setMessage("Name must be at least 3 characters");
+      return;
+    }
+
+    // ✅ Email validation
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(formData.email)) {
+      setMessage("Invalid email format");
+      return;
+    }
+
+    // ✅ Mobile validation (10 digits)
+    const mobilePattern = /^[0-9]{10}$/;
+    if (!mobilePattern.test(formData.mobile)) {
+      setMessage("Mobile number must be 10 digits");
+      return;
+    }
+
+    // ✅ Password validation
+    if (formData.password.length < 6) {
+      setMessage("Password must be at least 6 characters");
       return;
     }
 
@@ -34,17 +62,15 @@ export default function Signup() {
       setLoading(true);
       setMessage("");
 
-      // ✅ Signup API Call
       const res = await API.post("auth/signup", formData);
 
-setMessage("Signup Successful ✅ Redirecting to Send OTP...");
+      setMessage("Signup Successful ✅ Redirecting to Send OTP...");
 
-// ✅ ADD THIS LINE
-localStorage.setItem("email", formData.email);
+      localStorage.setItem("email", formData.email);
 
-setTimeout(() => {
-  navigate("/sendotp");
-}, 1000);
+      setTimeout(() => {
+        navigate("/sendotp");
+      }, 1000);
 
     } catch (error) {
       console.log(error);
@@ -104,6 +130,16 @@ setTimeout(() => {
             className="w-full px-4 py-3 rounded-lg bg-black text-white border border-gray-600 focus:border-green-500 outline-none"
             required
           />
+
+          <select
+            name="role"
+            value={formData.role}
+            onChange={handleChange}
+            className="w-full px-4 py-3 rounded-lg bg-black text-white border border-gray-600 focus:border-green-500 outline-none"
+          >
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
 
           <input
             type="password"
