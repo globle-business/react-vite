@@ -10,3 +10,14 @@
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE & Edge */
 }
+
+
+/* Hide scrollbar but allow scroll */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none; 
+  scrollbar-width: none; 
+}

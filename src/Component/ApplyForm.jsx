@@ -12,6 +12,8 @@ export default function ApplyForm() {
   const [loanTypes, setLoanTypes] = useState([]);
   const [showModal, setShowModal] = useState(false);
 
+  const [errors, setErrors] = useState({});
+
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -29,53 +31,88 @@ export default function ApplyForm() {
 
   const handleCancel = () => navigate("/");
 
+  const validateStep = () => {
+    let newErrors = {};
+
+    if (step === 1) {
+      if (!formData.fullName) newErrors.fullName = "Required";
+      if (!formData.email) newErrors.email = "Required";
+      if (!formData.mobileNumber) newErrors.mobileNumber = "Required";
+      if (!formData.state) newErrors.state = "Required";
+      if (!formData.zipCode) newErrors.zipCode = "Required";
+    }
+
+    if (step === 2) {
+      if (!formData.loanType) newErrors.loanType = "Required";
+      if (!formData.loanAmount) newErrors.loanAmount = "Required";
+      if (!formData.loanPurpose) newErrors.loanPurpose = "Required";
+    }
+
+    if (step === 3) {
+      if (!formData.employmentStatus) newErrors.employmentStatus = "Required";
+      if (!formData.monthlyIncome) newErrors.monthlyIncome = "Required";
+      if (!formData.creditScore) newErrors.creditScore = "Required";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const nextStep = () => {
-    if (step < 3) setStep(step + 1);
+    if (validateStep()) {
+      if (step < 3) setStep(step + 1);
+    }
   };
 
   const prevStep = () => {
     if (step > 1) setStep(step - 1);
   };
 
-  // ✅ Loan Types API Call
-  useEffect(() => {
-    const fetchLoanTypes = async () => {
-      try {
-        const res = await API.get("/loan-enquiries/loan-types");
-        setLoanTypes(res.data.loanTypes || []);
-      } catch (error) {
-        console.log("Loan types fetch error");
-      }
-    };
+ useEffect(() => {
+  const fetchLoanTypes = async () => {
+    try {
+      const res = await API.get("/loan-enquiries/loan-types");
 
-    fetchLoanTypes();
-  }, []);
+      const types =
+        res?.data?.loanTypes ||
+        res?.data?.data ||
+        res?.data ||
+        [];
 
- const handleChange = (e) => {
-  const { name, value } = e.target;
+      setLoanTypes(types);
 
-  if (name === "mobileNumber") {
-    if (value.length > 10) {
-      alert("Mobile number 10 digits se jyada nahi ho sakta");
-      return;
+    } catch (error) {
+      console.error("Loan types fetch error:", error);
+      setLoanTypes([]);
     }
-  }
+  };
 
-  if (name === "zipCode") {
-    if (value.length > 6) {
-      alert("Zip code 6 digits se jyada nahi ho sakta");
-      return;
+  fetchLoanTypes();
+}, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    if (name === "mobileNumber") {
+      if (!/^\d*$/.test(value)) return;
+      if (value.length > 10) return;
     }
-  }
 
-  setFormData({
-    ...formData,
-    [name]: value,
-  });
-};
+    if (name === "zipCode") {
+      if (!/^\d*$/.test(value)) return;
+      if (value.length > 6) return;
+    }
+
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validateStep()) return;
 
     try {
       setLoading(true);
@@ -86,7 +123,7 @@ export default function ApplyForm() {
 
       if (res.data.success) {
         setSuccessMsg("✅ Enquiry submitted successfully!");
-        setShowModal(true); 
+        setShowModal(true);
 
         setFormData({
           fullName: "",
@@ -103,11 +140,8 @@ export default function ApplyForm() {
           creditScore: "",
         });
 
-
         setStep(1);
       }
-
-    
 
     } catch (error) {
       alert(error.response?.data?.message || "Something went wrong");
@@ -115,9 +149,10 @@ export default function ApplyForm() {
       setLoading(false);
     }
   };
-    const closeModal = () => {
-  setShowModal(false);
-};
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
 
   const inputStyle =
     "w-full mt-1 px-4 py-2 rounded-lg bg-black/60 text-white border border-gray-700 focus:bg-black focus:ring-2 focus:ring-green-500 hover:border-green-500 hover:bg-black/70 outline-none transition text-sm";
@@ -141,44 +176,38 @@ export default function ApplyForm() {
       </style>
 
       {showModal && (
-  <div className="fixed inset-0 flex items-center justify-center bg-black/70 z-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black/70 z-50">
+          <div className="bg-gray-900 border border-green-500/30 rounded-xl p-6 max-w-md w-full text-center shadow-xl">
 
-    <div className="bg-gray-900 border border-green-500/30 rounded-xl p-6 max-w-md w-full text-center shadow-xl">
+            <h3 className="text-xl font-bold text-green-400 mb-3">
+              Enquiry Submitted ✅
+            </h3>
 
-      <h3 className="text-xl font-bold text-green-400 mb-3">
-        Enquiry Submitted ✅
-      </h3>
+            <p className="text-gray-300 text-sm mb-4">
+              Thank you for submitting your enquiry. Our agent will contact you shortly.
+            </p>
 
-      <p className="text-gray-300 text-sm mb-4">
-        Thank you for submitting your enquiry. Our agent will contact you shortly.
-      </p>
+            <div className="flex justify-center gap-3">
 
-      <p className="text-gray-400 text-xs mb-6">
-        If you want to track your enquiry status, please signup and view your enquiries.
-      </p>
+              <button
+                onClick={() => navigate("/signup")}
+                className="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-full text-sm"
+              >
+                Signup
+              </button>
 
-      <div className="flex justify-center gap-3">
+              <button
+                onClick={closeModal}
+                className="bg-gray-700 hover:bg-gray-600 text-white px-5 py-2 rounded-full text-sm"
+              >
+                Close
+              </button>
 
-        <button
-          onClick={() => navigate("/signup")}
-          className="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-full text-sm"
-        >
-          Signup
-        </button>
+            </div>
 
-        <button
-          onClick={closeModal}
-          className="bg-gray-700 hover:bg-gray-600 text-white px-5 py-2 rounded-full text-sm"
-        >
-          Close
-        </button>
-
-      </div>
-
-    </div>
-
-  </div>
-)}
+          </div>
+        </div>
+      )}
 
       <div className="max-w-xl mx-auto bg-gradient-to-br from-gray-900 to-gray-800 p-5 sm:p-6 rounded-2xl shadow-2xl border border-green-500/20">
 
@@ -186,12 +215,7 @@ export default function ApplyForm() {
           Loan Enquiry Form
         </h2>
 
-        {successMsg && (
-          <div className="bg-green-500/20 border border-green-500 text-green-300 text-sm p-3 rounded-lg text-center mb-4">
-            {successMsg}
-          </div>
-        )}
-
+        {/* STEPPER UI SAME */}
         <div className="relative flex items-center justify-between mb-2 px-6">
 
           <div className="absolute top-4 left-[17.5%] right-[17.5%] h-0.5 bg-gray-700"></div>
@@ -230,6 +254,7 @@ export default function ApplyForm() {
           ))}
         </div>
 
+        {/* FORM SAME */}
         <form className="space-y-5" onSubmit={handleSubmit}>
 
           {step === 1 && (
@@ -238,30 +263,41 @@ export default function ApplyForm() {
               <div>
                 <label className="text-green-400 text-sm">Full Name</label>
                 <input name="fullName" value={formData.fullName} onChange={handleChange} type="text" className={inputStyle}/>
+                {errors.fullName && <p className="text-red-400 text-xs mt-1">{errors.fullName}</p>}
               </div>
 
               <div>
                 <label className="text-green-400 text-sm">Email</label>
                 <input name="email" value={formData.email} onChange={handleChange} type="email" className={inputStyle}/>
+                {errors.email && <p className="text-red-400 text-xs mt-1">{errors.email}</p>}
               </div>
 
               <div>
                 <label className="text-green-400 text-sm">Mobile Number</label>
                 <input name="mobileNumber" value={formData.mobileNumber} onChange={handleChange} type="tel" className={inputStyle}/>
+                {formData.mobileNumber.length === 10 && (
+                  <p className="text-xs text-gray-400 mt-1">Maximum 10 digits allowed</p>
+                )}
               </div>
 
               <div>
                 <label className="text-green-400 text-sm">State</label>
                 <input name="state" value={formData.state} onChange={handleChange} type="text" className={inputStyle}/>
+                {errors.state && <p className="text-red-400 text-xs mt-1">{errors.state}</p>}
               </div>
 
               <div className="md:col-span-2">
                 <label className="text-green-400 text-sm">Zip Code</label>
                 <input name="zipCode" value={formData.zipCode} onChange={handleChange} type="text" className={inputStyle}/>
+                {formData.zipCode.length === 6 && (
+                  <p className="text-xs text-gray-400 mt-1">Maximum 6 digits allowed</p>
+                )}
               </div>
 
             </div>
           )}
+
+          {/* STEP 2 & 3 SAME AS YOUR FILE */}
 
           {step === 2 && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

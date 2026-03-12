@@ -33,7 +33,9 @@ export default function CustomerRecords() {
         email: u.email,
         phone: u.mobile,
         createdAt: u.createdAt,
-        status: "Active"
+        status: u.status || "Active",
+        role: u.role || "User",
+        address: u.address || "N/A"
       }));
 
       setCustomers(formatted);
@@ -121,15 +123,25 @@ export default function CustomerRecords() {
   };
 
   // ================= STATUS TOGGLE =================
-  const toggleStatus = (id) => {
+  const toggleStatus = async (id) => {
 
-    setCustomers((prev) =>
-      prev.map((cust) =>
-        cust.id === id
-          ? { ...cust, status: cust.status === "Active" ? "Deactive" : "Active" }
-          : cust
-      )
-    );
+    try {
+
+      const res = await API.patch(`/users/toggle-status/${id}`);
+
+      setCustomers((prev) =>
+        prev.map((cust) =>
+          cust.id === id
+            ? { ...cust, status: res.data.status }
+            : cust
+        )
+      );
+
+    } catch (error) {
+
+      console.error("Toggle Status Error:", error);
+
+    }
 
   };
 
@@ -370,38 +382,103 @@ export default function CustomerRecords() {
       )}
 
       {/* VIEW MODAL */}
-      {showViewModal && selectedCustomer && (
+{showViewModal && selectedCustomer && (
 
-        <div className="fixed inset-0 bg-black/70 flex justify-center items-center p-4">
+  <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-center items-center p-4 z-50">
 
-          <div className="bg-gray-800 p-8 rounded-xl w-full max-w-md">
+    <div className="bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
 
-            <h2 className="text-xl font-bold mb-4">
-              Customer Details
-            </h2>
+      {/* Header */}
+      <div className="flex justify-between items-center px-6 py-4 border-b border-gray-700">
 
-            <div className="space-y-2 text-sm">
+        <h2 className="text-lg font-semibold text-cyan-400 tracking-wide">
+          Customer Details
+        </h2>
 
-              <p><strong>ID:</strong> {selectedCustomer.id}</p>
-              <p><strong>Name:</strong> {selectedCustomer.username}</p>
-              <p><strong>Email:</strong> {selectedCustomer.email}</p>
-              <p><strong>Phone:</strong> {selectedCustomer.phone}</p>
-              <p><strong>Status:</strong> {selectedCustomer.status}</p>
+        <button
+          onClick={() => setShowViewModal(false)}
+          className="text-gray-400 hover:text-red-400 text-xl"
+        >
+          ✕
+        </button>
 
-            </div>
+      </div>
 
-            <button
-              onClick={() => setShowViewModal(false)}
-              className="mt-6 px-4 py-2 bg-red-600 rounded w-full"
-            >
-              Close
-            </button>
+      {/* Body */}
+      <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm">
 
-          </div>
+        <div className="bg-gray-800/60 p-3 rounded-lg">
+          <p className="text-gray-400 text-xs">Customer ID</p>
+          <p className="font-semibold">{selectedCustomer.id}</p>
+        </div>
+
+        <div className="bg-gray-800/60 p-3 rounded-lg">
+          <p className="text-gray-400 text-xs">Name</p>
+          <p className="font-semibold">{selectedCustomer.username}</p>
+        </div>
+
+        <div className="bg-gray-800/60 p-3 rounded-lg sm:col-span-2">
+          <p className="text-gray-400 text-xs">Email</p>
+          <p className="font-semibold break-all">{selectedCustomer.email}</p>
+        </div>
+
+        <div className="bg-gray-800/60 p-3 rounded-lg">
+          <p className="text-gray-400 text-xs">Phone</p>
+          <p className="font-semibold">{selectedCustomer.phone}</p>
+        </div>
+
+        <div className="bg-gray-800/60 p-3 rounded-lg">
+          <p className="text-gray-400 text-xs">Status</p>
+
+          <span
+            className={`inline-block px-3 py-1 rounded-full text-xs font-semibold
+            ${selectedCustomer.status === "Active"
+              ? "bg-green-600/20 text-green-400"
+              : "bg-red-600/20 text-red-400"
+            }`}
+          >
+            {selectedCustomer.status}
+          </span>
 
         </div>
 
-      )}
+        <div className="bg-gray-800/60 p-3 rounded-lg sm:col-span-2">
+          <p className="text-gray-400 text-xs">Address</p>
+          <p className="font-semibold">
+            {selectedCustomer.address || "N/A"}
+          </p>
+        </div>
+
+        <div className="bg-gray-800/60 p-3 rounded-lg sm:col-span-2">
+          <p className="text-gray-400 text-xs">Created At</p>
+          <p className="font-semibold">
+            {selectedCustomer.createdAt
+              ? new Date(selectedCustomer.createdAt).toLocaleString()
+              : "N/A"}
+          </p>
+        </div>
+
+      </div>
+
+      {/* Footer */}
+      <div className="border-t border-gray-700 p-4 flex justify-end">
+
+        <button
+          onClick={() => setShowViewModal(false)}
+          className="px-5 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-sm font-medium transition"
+        >
+          Close
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+)}
+
+
 
     </div>
   );

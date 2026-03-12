@@ -25,7 +25,7 @@ export default function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="space-y-3 flex-1 mt-4 overflow-y-auto">
+    <nav className="space-y-3 flex-1 mt-4 overflow-y-auto scrollbar-hide">
 
         <Link to="/admin" className={linkStyle("/admin/home")}>
           <LayoutDashboard size={22} />
