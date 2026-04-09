@@ -1,13 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Plus, Edit, Trash2 } from "lucide-react";
+import API from "../../api/axios";
 
 export default function LoanType() {
 
-  const [loanTypes, setLoanTypes] = useState([
-    { id: 1, name: "Home Loan", interest: "8.5%", status: "Active" },
-    { id: 2, name: "Car Loan", interest: "9%", status: "Active" },
-    { id: 3, name: "Personal Loan", interest: "12%", status: "Inactive" },
-  ]);
+  const [loanTypes, setLoanTypes] = useState([]);
 
   const [showModal, setShowModal] = useState(false);
   const [editLoan, setEditLoan] = useState(null);
@@ -18,11 +15,40 @@ export default function LoanType() {
     status: "Active"
   });
 
+  /* ================= GET LOAN TYPES ================= */
+
+  const fetchLoanTypes = async () => {
+    try {
+
+      const res = await API.get("/loan-enquiries/loan-types");
+
+      const data = res.data.loanTypes.map((name, index) => ({
+        id: index + 1,
+        name,
+        interest: "",
+        status: "Active"
+      }));
+
+      setLoanTypes(data);
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchLoanTypes();
+  }, []);
+
+  /* ================= OPEN CREATE ================= */
+
   const openCreate = () => {
     setEditLoan(null);
     setFormData({ name: "", interest: "", status: "Active" });
     setShowModal(true);
   };
+
+  /* ================= OPEN EDIT ================= */
 
   const openEdit = (loan) => {
     setEditLoan(loan);
@@ -30,28 +56,72 @@ export default function LoanType() {
     setShowModal(true);
   };
 
-  const handleSubmit = (e) => {
+  /* ================= CREATE / UPDATE ================= */
+
+  const handleSubmit = async (e) => {
+
     e.preventDefault();
 
-    if (editLoan) {
-      setLoanTypes(
-        loanTypes.map((l) =>
-          l.id === editLoan.id ? { ...l, ...formData } : l
-        )
-      );
-    } else {
-      const newLoan = {
-        id: Date.now(),
-        ...formData
-      };
-      setLoanTypes([...loanTypes, newLoan]);
+    try {
+
+      if (editLoan) {
+
+        await API.patch(`/loan-enquiries/toggle-loan-type/${editLoan.id}`);
+
+        setLoanTypes(
+          loanTypes.map((l) =>
+            l.id === editLoan.id ? { ...l, ...formData } : l
+          )
+        );
+
+      } else {
+
+        const res = await API.post("/loan-enquiries/add-loan-type", {
+          name: formData.name
+        });
+
+        const newLoan = {
+          id: res.data.data._id,
+          name: res.data.data.name,
+          interest: formData.interest,
+          status: "Active"
+        };
+
+        setLoanTypes([...loanTypes, newLoan]);
+
+      }
+
+      setShowModal(false);
+
+    } catch (error) {
+      console.log(error);
     }
 
-    setShowModal(false);
   };
 
-  const handleDelete = (id) => {
-    setLoanTypes(loanTypes.filter((l) => l.id !== id));
+  /* ================= DELETE / TOGGLE ================= */
+
+  const handleDelete = async (id) => {
+
+    try {
+
+      await API.patch(`/loan-enquiries/toggle-loan-type/${id}`);
+
+      setLoanTypes(
+        loanTypes.map((loan) =>
+          loan.id === id
+            ? {
+                ...loan,
+                status: loan.status === "Active" ? "Inactive" : "Active"
+              }
+            : loan
+        )
+      );
+
+    } catch (error) {
+      console.log(error);
+    }
+
   };
 
   return (
@@ -81,15 +151,24 @@ export default function LoanType() {
               <th className="p-4 text-center">Actions</th>
             </tr>
           </thead>
+
           <tbody>
             {loanTypes.map((loan) => (
               <tr key={loan.id} className="border-b border-gray-800">
                 <td className="p-4">{loan.id}</td>
                 <td className="p-4">{loan.name}</td>
                 <td className="p-4">{loan.interest}</td>
-                <td className={`p-4 ${loan.status === "Active" ? "text-green-400" : "text-red-400"}`}>
+
+                <td
+                  className={`p-4 ${
+                    loan.status === "Active"
+                      ? "text-green-400"
+                      : "text-red-400"
+                  }`}
+                >
                   {loan.status}
                 </td>
+
                 <td className="p-4 flex justify-center gap-4">
                   <button
                     onClick={() => openEdit(loan)}
@@ -108,12 +187,14 @@ export default function LoanType() {
               </tr>
             ))}
           </tbody>
+
         </table>
       </div>
 
       {showModal && (
         <div className="fixed inset-0 bg-black/70 flex justify-center items-center">
           <div className="bg-gray-800 p-8 rounded-xl w-full max-w-md">
+
             <h2 className="text-xl font-bold mb-6">
               {editLoan ? "Edit Loan Type" : "Create Loan Type"}
             </h2>
@@ -171,6 +252,7 @@ export default function LoanType() {
               </div>
 
             </form>
+
           </div>
         </div>
       )}
